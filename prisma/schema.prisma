@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUM Role
+enum Role {
+  ADMIN
+  USER
+}
+
+// USER Table
+model User {
+  id        String               @id @default(cuid())
+  email     String               @unique
+  name      String?
+  password  String
+  role      Role                 @default(USER)
+  avatar    String?
+  courses   CourseEnrollment[]
+  progress  UserProgress[]
+  coursesCreated  Course[]             @relation("UserCreatedCourses")
+}
+
+// COURSE Table
+model Course {
+  id          String             @id @default(cuid())
+  title       String
+  description String
+  image       String?
+  createdBy   String
+  chapters    Chapter[]
+  enrollments CourseEnrollment[]
+  createdAt   DateTime           @default(now())
+
+  // Relation to User (creator)
+  creator     User               @relation("UserCreatedCourses", fields: [createdBy], references: [id])
+}
+
+// ENROLLMENT Table (pivot table between User and Course)
+model CourseEnrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  enrolledAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+// CHAPTER Table
+model Chapter {
+  id          String      @id @default(cuid())
+  courseId    String
+  title       String
+  description String
+  materials   Material[]
+  questions   Question[]
+  createdAt   DateTime    @default(now())
+
+  course      Course      @relation(fields: [courseId], references: [id])
+  progress    UserProgress[]
+}
+
+// MATERIAL Table
+model Material {
+  id         String     @id @default(cuid())
+  chapterId  String
+  type       MaterialType
+  content    String
+  createdAt  DateTime   @default(now())
+
+  chapter    Chapter    @relation(fields: [chapterId], references: [id])
+}
+
+enum MaterialType {
+  video
+  text
+}
+
+// QUESTION Table
+model Question {
+  id            String   @id @default(cuid())
+  chapterId     String
+  questionText  String
+  options       String[] // Use string[] for multiple choices
+  answer        String   // Could be index or string match
+  createdAt     DateTime @default(now())
+
+  chapter       Chapter  @relation(fields: [chapterId], references: [id])
+}
+
+// USER_PROGRESS Table
+model UserProgress {
+  id         String    @id @default(cuid())
+  userId     String
+  chapterId  String
+  status     ProgressStatus
+  updatedAt  DateTime  @updatedAt
+
+  user       User      @relation(fields: [userId], references: [id])
+  chapter    Chapter   @relation(fields: [chapterId], references: [id])
+
+  @@unique([userId, chapterId])
+}
+
+enum ProgressStatus {
+  not_started
+  in_progress
+  completed
+}
