@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Button,
   Navbar,
   NavbarBrand,
   NavbarCollapse,
@@ -22,7 +21,7 @@ export default function GuestNavbar() {
           height={36}
           className="mr-3"
         />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+        <span className="self-center whitespace-nowrap text-xl font-semibold">
           Flowbite React
         </span>
       </NavbarBrand>

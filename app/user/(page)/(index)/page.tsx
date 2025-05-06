@@ -1,5 +1,6 @@
 "use client";
 
+import "./globals.css";
 import UserNavbar from "./components/navbar";
 
 export default function UserHomePage() {

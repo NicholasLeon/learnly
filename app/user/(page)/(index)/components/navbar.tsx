@@ -14,7 +14,7 @@ import {
 } from "flowbite-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUserProfile } from "../../../../../lib/data";
+import { getUserProfile } from "@/lib/data";
 
 export default function UserNavbar() {
   const router = useRouter();
@@ -29,9 +29,9 @@ export default function UserNavbar() {
     const fetchUser = async () => {
       const res = await fetch("/api/user");
       const userData = await res.json();
-  
+
       if (!userData) return;
-  
+
       setUser({
         name: userData.name ?? "Unnamed",
         email: userData.email ?? "No email",
@@ -41,12 +41,12 @@ export default function UserNavbar() {
             : "https://flowbite.com/docs/images/people/profile-picture-5.jpg",
       });
     };
-  
+
     fetchUser();
   }, []);
 
   const handleSignOut = async () => {
-    router.push("/user/sign-in");
+    router.push("/sign-in");
   };
 
   return (
@@ -54,12 +54,9 @@ export default function UserNavbar() {
       <NavbarBrand href="/">
         <img
           src="/favicon.ico"
-          className="mr-3 h-6 sm:h-9"
+          className="mr-9 h-6 sm:h-9"
           alt="Flowbite Logo"
         />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          Learnly
-        </span>
       </NavbarBrand>
 
       <div className="flex md:order-2">
@@ -91,9 +88,6 @@ export default function UserNavbar() {
             <DropdownItem onClick={() => router.push("/user/settings")}>
               Settings
             </DropdownItem>
-            <DropdownItem onClick={() => router.push("/user/earnings")}>
-              Earnings
-            </DropdownItem>
             <DropdownDivider />
             <DropdownItem onClick={handleSignOut}>Sign out</DropdownItem>
           </Dropdown>
@@ -107,7 +101,6 @@ export default function UserNavbar() {
         </NavbarLink>
         <NavbarLink href="#">About</NavbarLink>
         <NavbarLink href="#">Services</NavbarLink>
-        <NavbarLink href="#">Pricing</NavbarLink>
         <NavbarLink href="#">Contact</NavbarLink>
       </NavbarCollapse>
     </Navbar>
